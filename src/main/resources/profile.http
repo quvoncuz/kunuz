@@ -1,0 +1,49 @@
+### create Profile
+POST localhost:8080/profile
+Content-Type: application/json
+
+{
+  "name": "Ali",
+  "surname": "Valiyev",
+  "password": "1234",
+  "username": "alivali11",
+  "photoId": "1",
+  "roles": ["ADMIN", "ROLE_USER"]
+}
+
+### get by id
+GET localhost:8080/profile/2
+
+### get profiles
+GET localhost:8080/profile/all?page=1&size=5
+
+### update by admin
+PUT localhost:8080/profile/admin/3
+Content-Type: application/json
+
+{
+  "name": "Ali",
+  "surname": "Valiyev",
+  "password": "1234",
+  "username": "alivali9",
+  "photoId": "2",
+  "roles": ["ROLE_USER"]
+}
+
+### update by user
+PUT localhost:8080/profile/3
+Content-Type: application/json
+
+{
+  "name": "Vali",
+  "surname": "Aliyev",
+  "username": "Valiali",
+  "photoId": "5",
+  "roles": ["ADMIN"]
+}
+
+### Delete by id
+DELETE localhost:8080/profile/2
+
+### update password
+PUT localhost:8080/profile/update/4?oldPassword=1234&newPassword=1111

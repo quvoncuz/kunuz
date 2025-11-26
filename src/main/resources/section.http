@@ -1,0 +1,30 @@
+### create section
+POST localhost:8080/section
+Content-Type: application/json
+
+{
+  "orderNumber": 6,
+  "nameUz": "Biznes",
+  "nameEn": "Business",
+  "nameRu": "Бизнес",
+  "key": "biznes"
+}
+
+### update section
+PUT localhost:8080/section/7
+Content-Type: application/json
+
+{
+  "orderNumber": 7,
+  "nameUz": "Biznes",
+  "nameEn": "Business",
+  "nameRu": "Бизнес",
+  "key": "biznes"
+}
+
+### get all by lang
+GET localhost:8080/section?page=1&size=10
+Accept-Language: ru
+
+### get all
+GET localhost:8080/section/admin?page=1&size=10

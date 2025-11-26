@@ -1,0 +1,33 @@
+
+### create category
+POST localhost:8080/category
+Content-Type: application/json
+
+{
+  "key": "jamiyat",
+  "nameUz": "Jamiyat",
+  "nameEn": "Nation",
+  "nameRu": "qwerty",
+  "orderNumber": 1
+}
+### Update category
+PUT localhost:8080/category/3
+Content-Type: application/json
+
+{
+  "key": "iqtisodiy",
+  "nameEn": "Economy",
+  "nameRu": "экономика",
+  "nameUz": "Iqtisodiy",
+  "orderNumber": 7
+}
+
+### Get all
+GET localhost:8080/category
+
+### Get by id
+GET localhost:8080/category/1
+
+### Get all by lang
+GET localhost:8080/category/lang
+Accept-Language:
