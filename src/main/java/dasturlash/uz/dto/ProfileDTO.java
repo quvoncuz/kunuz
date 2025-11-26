@@ -1,5 +1,6 @@
 package dasturlash.uz.dto;
 
+import dasturlash.uz.enums.Role;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,7 +29,7 @@ public class ProfileDTO {
     @NotBlank(message = "Password required")
     private String password;
 
-    private List<String> roles = List.of("ROLE_USER");
+    private List<Role> roles = List.of(Role.ROLE_USER);
 
     private LocalDateTime createdDate;
 }

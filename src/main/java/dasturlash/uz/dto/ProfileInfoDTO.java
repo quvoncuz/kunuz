@@ -1,5 +1,6 @@
 package dasturlash.uz.dto;
 
+import dasturlash.uz.enums.Role;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,6 +22,6 @@ public class ProfileInfoDTO {
 
     private Integer photoId;
 
-    private List<String> roles;
+    private List<Role> roles;
 
 }

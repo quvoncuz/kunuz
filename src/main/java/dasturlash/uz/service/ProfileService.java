@@ -37,15 +37,13 @@ public class ProfileService {
         profileEntity.setSurname(profileDTO.getSurname());
         profileEntity.setUsername(profileDTO.getUsername());
         profileEntity.setPassword(profileDTO.getPassword());
-        profileEntity.setStatus(Status.ACTIVE.toString());
+        profileEntity.setStatus(Status.ACTIVE);
         ProfileEntity entity = profileRepository.save(profileEntity);
 
         profileDTO.setId(entity.getId());
         profileDTO.setCreatedDate(entity.getCreatedDate());
 
-        profileDTO.getRoles().forEach(role -> {
-            profileRoleRepository.save(new ProfileRoleEntity(profileEntity.getId(), role));
-        });
+        profileDTO.getRoles().forEach(role -> profileRoleRepository.save(new ProfileRoleEntity(profileEntity.getId(), role)));
 
         return toInfoDTO(profileEntity);
     }
@@ -121,9 +119,7 @@ public class ProfileService {
         long totalCount = profileEntities.getTotalElements();
 
         List<ProfileDTO> resultList = new LinkedList<>();
-        profileEntities.forEach(profileEntity -> {
-            resultList.add(toDTO(profileEntity));
-        });
+        profileEntities.forEach(profileEntity ->  resultList.add(toDTO(profileEntity)));
         return new PageImpl<>(resultList, pageRequest, totalCount);
     }
 

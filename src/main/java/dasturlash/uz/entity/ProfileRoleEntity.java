@@ -27,4 +27,8 @@ public class ProfileRoleEntity {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    public ProfileRoleEntity(Integer profileId, Role role) {
+        this.profileId = profileId;
+        this.role = role;
+    }
 }
