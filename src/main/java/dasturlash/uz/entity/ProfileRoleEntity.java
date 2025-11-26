@@ -1,5 +1,6 @@
 package dasturlash.uz.entity;
 
+import dasturlash.uz.enums.Role;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,10 +24,7 @@ public class ProfileRoleEntity {
     private Integer profileId;
 
     @Column
-    private String role;
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
-    public ProfileRoleEntity(Integer profileId, String role) {
-        this.profileId = profileId;
-        this.role = role;
-    }
 }

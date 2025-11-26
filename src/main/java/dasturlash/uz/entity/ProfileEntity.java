@@ -1,5 +1,6 @@
 package dasturlash.uz.entity;
 
+import dasturlash.uz.enums.Status;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,7 +26,8 @@ public class ProfileEntity {
     @Column
     private String password;
     @Column
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private Status status;
     @Column(name = "visible")
     private Boolean visible = true;
 
