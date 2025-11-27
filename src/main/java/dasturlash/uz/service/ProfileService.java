@@ -158,7 +158,6 @@ public class ProfileService {
         profileInfoDTO.setRoles(
                 profileRoleRepository.findAllByProfileId(profileEntity.getId())
                         .stream()
-                        .map(ProfileRoleEntity::getRole)
                         .toList());
         return profileInfoDTO;
     }
@@ -174,7 +173,6 @@ public class ProfileService {
         profileDTO.setRoles(
                 profileRoleRepository.findAllByProfileId(profileEntity.getId())
                         .stream()
-                        .map(ProfileRoleEntity::getRole)
                         .toList());
         return profileDTO;
     }

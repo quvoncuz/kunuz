@@ -3,7 +3,7 @@ package dasturlash.uz.util;
 import java.security.MessageDigest;
 
 public class MD5Encoder {
-    public static String md5(String input) {
+    public static String encoder(String input) {
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
             byte[] digest = md.digest(input.getBytes(java.nio.charset.StandardCharsets.UTF_8));
