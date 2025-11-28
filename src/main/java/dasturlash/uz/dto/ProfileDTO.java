@@ -1,5 +1,6 @@
 package dasturlash.uz.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import dasturlash.uz.enums.Role;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
@@ -10,6 +11,7 @@ import java.util.List;
 
 @Getter
 @Setter
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ProfileDTO {
 
     private Integer id;
@@ -29,7 +31,7 @@ public class ProfileDTO {
     @NotBlank(message = "Password required")
     private String password;
 
-    private List<Role> roles = List.of(Role.ROLE_USER);
+    private List<Role> roles;
 
     private LocalDateTime createdDate;
 }
