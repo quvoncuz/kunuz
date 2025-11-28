@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -34,6 +35,10 @@ public class ProfileEntity {
     @Column(name = "created_date")
     @CreationTimestamp
     private LocalDateTime createdDate;
+
     @Column(name = "photo_id")
     private Integer photoId;
+
+    @OneToMany(mappedBy = "profile")
+    private List<ProfileRoleEntity> profileRoles;
 }
