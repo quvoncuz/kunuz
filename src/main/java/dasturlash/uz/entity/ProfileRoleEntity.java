@@ -25,10 +25,10 @@ public class ProfileRoleEntity {
 
     @Column
     @Enumerated(EnumType.STRING)
-    private Role role;
+    private Role roles;
 
-    public ProfileRoleEntity(Integer profileId, Role role) {
+    public ProfileRoleEntity(Integer profileId, Role roles) {
         this.profileId = profileId;
-        this.role = role;
+        this.roles = roles;
     }
 }
