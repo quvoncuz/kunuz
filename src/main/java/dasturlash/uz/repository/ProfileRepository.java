@@ -1,11 +1,11 @@
 package dasturlash.uz.repository;
 
 import dasturlash.uz.entity.ProfileEntity;
+import dasturlash.uz.enums.Status;
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -24,4 +24,11 @@ public interface ProfileRepository extends CrudRepository<ProfileEntity, Integer
     @Transactional
     @Query("update ProfileEntity set visible = false where id = ?1")
     int updateVisibleById(Integer id);
+
+    Optional<ProfileEntity> findByUsernameAndVisibleIsTrue(@NotBlank(message = "Username required") String username);
+
+    @Modifying
+    @Transactional
+    @Query("update ProfileEntity set status = ?2 where username = ?1")
+    void confirm(String username, Status status);
 }
