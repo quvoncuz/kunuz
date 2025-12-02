@@ -1,9 +1,9 @@
 package dasturlash.uz.controller;
 
-import dasturlash.uz.entity.EmailEntity;
 import dasturlash.uz.entity.SmsEntity;
-import dasturlash.uz.service.SmsAndEmailService;
+import dasturlash.uz.service.sms.SmsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,20 +16,20 @@ import java.util.List;
 @RequestMapping("/sms")
 public class SmsController {
     @Autowired
-    private SmsAndEmailService smsAndEmailService;
+    private SmsService smsService;
 
     @GetMapping("")
-    public ResponseEntity<List<?>> getAllByUsername(@RequestParam String username) {
-        return ResponseEntity.ok(smsAndEmailService.getByUsername(username));
+    public ResponseEntity<List<?>> getAllByUsername(@RequestParam String phone) {
+        return ResponseEntity.ok(smsService.getByPhone(phone));
     }
 
     @GetMapping("/sms")
-    public ResponseEntity<List<SmsEntity>> getAllSms() {
-        return ResponseEntity.ok(smsAndEmailService.findAllSms());
+    public ResponseEntity<PageImpl<SmsEntity>> getAllSms(int page, int size) {
+        return ResponseEntity.ok(smsService.pagination(page-1, size));
     }
 
-    @GetMapping("/email")
-    public ResponseEntity<List<EmailEntity>> getAllEmail() {
-        return ResponseEntity.ok(smsAndEmailService.findAllEmail());
+    @GetMapping("/")
+    public ResponseEntity<List<SmsEntity>> getAllByDate(@RequestParam String date) {
+        return ResponseEntity.ok(smsService.getByGivenDate(date));
     }
 }
