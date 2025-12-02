@@ -1,0 +1,38 @@
+### Registration using Email
+POST localhost:8080/api/v1/auth/registration
+Content-Type: application/json
+
+{
+  "name": "quvonch",
+  "surname": "haydarov",
+  "username": "93 936 04 21",
+  "password": "12345"
+}
+
+### Login
+POST localhost:8080/api/v1/auth/login
+Content-Type: application/json
+
+{
+  "username": "quvoncbe.uz@gmail.com",
+  "password": "12345"
+}
+
+### varification
+POST localhost:8080/api/v1/auth/varification
+Content-Type: application/json
+
+{
+  "username": "93 936 04 21",
+  "code": "98886"
+}
+
+
+###
+POST notify.eskiz.uz/api/auth/login
+Content-Type: application/json
+
+{
+  "email":"quvoncbe.uz@gmail.com",
+  "password":"mOUYigrPtWnVkATH5sBcig50yejS53SzUyagatMo"
+}
