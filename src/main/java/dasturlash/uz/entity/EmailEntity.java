@@ -25,6 +25,9 @@ public class EmailEntity {
     @Column(name = "email", nullable = false)
     private String email;
 
+    @Column
+    private String body;
+
     @Column(name = "created_date")
     @CreationTimestamp
     private LocalDateTime createdDate;
@@ -33,9 +36,10 @@ public class EmailEntity {
     @Enumerated(EnumType.STRING)
     private SmsStatus smsStatus;
 
-    public EmailEntity(String code, String email, SmsStatus smsStatus) {
+    public EmailEntity(String code, String email, String body, SmsStatus smsStatus) {
         this.code = code;
         this.email = email;
+        this.body = body;
         this.smsStatus = smsStatus;
     }
 }
