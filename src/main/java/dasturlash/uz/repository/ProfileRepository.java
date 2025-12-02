@@ -26,9 +26,4 @@ public interface ProfileRepository extends CrudRepository<ProfileEntity, Integer
     int updateVisibleById(Integer id);
 
     Optional<ProfileEntity> findByUsernameAndVisibleIsTrue(@NotBlank(message = "Username required") String username);
-
-    @Modifying
-    @Transactional
-    @Query("update ProfileEntity set status = ?2 where username = ?1")
-    void confirm(String username, Status status);
 }

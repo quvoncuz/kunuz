@@ -1,8 +1,9 @@
 package dasturlash.uz.controller;
 
-import dasturlash.uz.dto.AuthorizationDTO;
+import dasturlash.uz.dto.auth.AuthorizationDTO;
 import dasturlash.uz.dto.ProfileDTO;
-import dasturlash.uz.dto.RegistrationDTO;
+import dasturlash.uz.dto.auth.RegistrationDTO;
+import dasturlash.uz.dto.auth.VerificationDTO;
 import dasturlash.uz.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,10 +27,9 @@ public class AuthController {
         return ResponseEntity.ok(authService.login(dto));
     }
 
-    @GetMapping("/varification")
-    public ResponseEntity<?> varification(@RequestParam String username,
-                                          @RequestParam String code) {
-        return ResponseEntity.ok(authService.confirmByEmail(username, code));
+    @PostMapping("/varification")
+    public ResponseEntity<?> varification(@Valid @RequestBody VerificationDTO dto) {
+        return ResponseEntity.ok(authService.verification(dto));
     }
 
 
