@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,4 +25,6 @@ public interface EmailRepository extends JpaRepository<EmailEntity, Integer> {
     void updateStatus(Integer id, SmsStatus smsStatus);
 
     List<EmailEntity> findAllByEmail(String email);
+
+    List<EmailEntity> findAllByCreatedDateBetween(LocalDateTime start, LocalDateTime end);
 }
