@@ -74,7 +74,7 @@ public class SmsSenderService {
 
 
     private String getToken() {
-        if (response == null || response.getBody().getCreatedDate().plusDays(30).isBefore(LocalDate.now())) {
+        if (response == null || response.getBody().getCreatedDate().plusDays(29).isBefore(LocalDate.now())) {
             SmsProviderTokenDTO smsProviderTokenDTO = new SmsProviderTokenDTO();
             smsProviderTokenDTO.setEmail(email);
             smsProviderTokenDTO.setPassword(password);
