@@ -1,0 +1,16 @@
+POST http://localhost:8080/attach
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="file"; filename="mohitabon.mp4"
+
+< /home/quvoncuz/Desktop/Java/lesson-16-attach/test2.mp4
+
+### get attach
+GET localhost:8080/attach/50c4f82b-71d7-4175-b16f-39d7cd00bf14.mp4
+
+### download
+GET localhost:8080/attach/download/43f9cacd-3f3e-49f7-a8af-1ba1481d6fa7.m4a
+
+### pagination
+GET localhost:8080/attach?page=1&size=5
