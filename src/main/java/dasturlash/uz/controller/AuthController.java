@@ -6,10 +6,12 @@ import dasturlash.uz.dto.auth.RegistrationDTO;
 import dasturlash.uz.dto.auth.VerificationDTO;
 import dasturlash.uz.service.AuthService;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/auth")
 public class AuthController {
@@ -18,7 +20,8 @@ public class AuthController {
     private AuthService authService;
 
     @PostMapping("/registration")
-    public ResponseEntity<?> register(@Valid @RequestBody RegistrationDTO dto) {
+    public ResponseEntity<?> register( @RequestBody RegistrationDTO dto) {
+        log.warn("register request {}", dto.toString());
         return ResponseEntity.ok(authService.registration(dto));
     }
 

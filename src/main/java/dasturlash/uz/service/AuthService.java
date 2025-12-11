@@ -15,7 +15,9 @@ import dasturlash.uz.repository.EmailRepository;
 import dasturlash.uz.repository.ProfileRepository;
 import dasturlash.uz.repository.SmsRepository;
 import dasturlash.uz.service.sms.SmsSenderService;
+import dasturlash.uz.util.JwtUtil;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+@Slf4j
 @Service
 public class AuthService {
     @Autowired
@@ -44,9 +47,16 @@ public class AuthService {
     private EmailSendingService emailSendingService;
 
     public String registration(RegistrationDTO dto) {
+        Optional<ProfileEntity> existOptional = null;
         // check
-        Optional<ProfileEntity> existOptional = profileRepository.findByUsernameAndVisibleIsTrue(dto.getUsername());
+        if (dto.getUsername().contains("@")) {
+            existOptional = profileRepository.findByUsernameAndVisibleIsTrue(dto.getUsername());
+        } else {
+            existOptional = profileRepository.findByUsernameAndVisibleIsTrue(normalizePhone(dto.getUsername()));
+        }
+
         if (existOptional.isPresent()) {
+            log.warn("Profile with name {} already exists", dto.getUsername());
             ProfileEntity existsProfile = existOptional.get();
             if (existsProfile.getStatus() == Status.NOT_ACTIVE) {
                 profileRoleService.deleteRolesByProfileId(existsProfile.getId());
@@ -56,10 +66,13 @@ public class AuthService {
             }
 
         }
+
         // create profile
         ProfileEntity profile = new ProfileEntity();
         profile.setName(dto.getName());
-        if (!dto.getUsername().contains("@")) {
+        if (!dto.getUsername().
+
+                contains("@")) {
             profile.setUsername(normalizePhone(dto.getUsername()));
         } else {
             profile.setUsername(dto.getUsername());
@@ -72,7 +85,9 @@ public class AuthService {
         profileRoleService.create(profile.getId(), Role.ROLE_USER);
         // send sms to amail or phone
 
-        if (dto.getUsername().contains("@")) {
+        if (dto.getUsername().
+
+                contains("@")) {
             emailSendingService.sendRegistrationStyledEmail(dto.getName(), dto.getUsername());
         } else {
             smsSender.sendRegistrationSMS(normalizePhone(dto.getUsername()));
@@ -84,27 +99,26 @@ public class AuthService {
     }
 
     public ProfileDTO login(@Valid AuthorizationDTO dto) {
-        Optional<ProfileEntity> profileOptional = profileRepository.findByUsernameAndVisibleIsTrue(dto.getUsername());
-        if (profileOptional.isEmpty()) {
-            throw new AppBadException("Username or password wrong");
-        }
-        if (profileOptional.get().getStatus() == Status.BLOCKED) {
+        ProfileEntity profile = profileRepository
+                .findByUsernameAndVisibleIsTrue(dto.getUsername()).orElseThrow(() -> new AppBadException("Username or password is wrong"));
+        if (profile.getStatus() == Status.BLOCKED) {
             throw new AppBadException("This user is blocked. Please contact administrator");
         }
-        ProfileEntity entity = profileOptional.get();
-        if (!bCryptPasswordEncoder.matches(dto.getPassword(), entity.getPassword())) {
+        if (!bCryptPasswordEncoder.matches(dto.getPassword(), profile.getPassword())) {
             throw new AppBadException("Username or password wrong");
         }
-        if (!entity.getStatus().equals(Status.ACTIVE)) {
+        if (!profile.getStatus().equals(Status.ACTIVE)) {
             throw new AppBadException("User in wrong status");
         }
         // status
         ProfileDTO response = new ProfileDTO();
-        response.setId(entity.getId());
-        response.setName(entity.getName());
-        response.setSurname(entity.getSurname());
-        response.setUsername(entity.getUsername());
-        response.setRoles(profileRoleService.getByProfileId(entity.getId()));
+        response.setId(profile.getId());
+        response.setName(profile.getName());
+        response.setSurname(profile.getSurname());
+        response.setUsername(profile.getUsername());
+        response.setRoles(profileRoleService.getByProfileId(profile.getId()));
+        response.setJwt(JwtUtil.encode(profile.getUsername(),
+                                       response.getRoles().stream().map(Enum::name).toList()));
         return response;
     }
 
