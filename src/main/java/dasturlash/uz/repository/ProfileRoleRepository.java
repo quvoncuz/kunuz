@@ -12,7 +12,8 @@ import java.util.List;
 
 @Repository
 public interface ProfileRoleRepository extends JpaRepository<ProfileRoleEntity, Integer> {
-    List<Role> findAllByProfileId(Integer id);
+
+    List<ProfileRoleEntity> findAllByProfileId(Integer id);
 
     @Query("select roles from ProfileRoleEntity where profileId =?1")
     List<Role> getRoleListByProfileId(Integer profileId);

@@ -30,7 +30,7 @@ public class AttachController {
         return attachService.download(id);
     }
 
-    @GetMapping("")
+    @GetMapping("all")
     public Page<AttachDTO> pagination(@RequestParam int page,
                                       @RequestParam int size) {
         return attachService.pagination(page-1, size);

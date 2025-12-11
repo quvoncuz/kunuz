@@ -2,7 +2,6 @@ package dasturlash.uz.controller;
 
 import dasturlash.uz.dto.ProfileDTO;
 import dasturlash.uz.dto.ProfileInfoDTO;
-import dasturlash.uz.entity.ProfileEntity;
 import dasturlash.uz.service.ProfileService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,15 +9,13 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/profile")
 public class ProfileController {
     @Autowired
     private ProfileService profileService;
 
-    @PostMapping("")
+    @PostMapping({"", "/"})
     public ResponseEntity<ProfileInfoDTO> create(@Valid @RequestBody ProfileDTO profileDTO) {
         return ResponseEntity.ok(profileService.create(profileDTO));
     }

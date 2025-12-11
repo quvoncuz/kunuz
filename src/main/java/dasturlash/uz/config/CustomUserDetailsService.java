@@ -15,6 +15,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Autowired
     private ProfileRepository profileRepository;
 
+    @Autowired
     private ProfileRoleRepository profileRoleRepository;
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

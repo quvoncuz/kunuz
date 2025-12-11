@@ -1,7 +1,6 @@
 package dasturlash.uz.repository;
 
 import dasturlash.uz.entity.ProfileEntity;
-import dasturlash.uz.enums.Status;
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.data.domain.Page;
@@ -25,5 +24,6 @@ public interface ProfileRepository extends CrudRepository<ProfileEntity, Integer
     @Query("update ProfileEntity set visible = false where id = ?1")
     int updateVisibleById(Integer id);
 
-    Optional<ProfileEntity> findByUsernameAndVisibleIsTrue(@NotBlank(message = "Username required") String username);
+    @Query("select a from ProfileEntity as a where a.username= ?1 and a.visible=true ")
+    Optional<ProfileEntity> findByUsernameAndVisibleIsTrue(String username);
 }

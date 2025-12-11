@@ -47,7 +47,7 @@ public class SmsSenderService {
 //        String body = "<#>bormi.uz chegirmalar do'konidan ro'yxatdan o'tish uchun tasdiqlash kodi: " + smsCode; // test message
         String body = "Bu Eskiz dan test"; // test message
         try {
-            sendSms(phone, body);
+//            sendSms(phone, body);
             smsService.create(phone, smsCode, body);
         } catch (Exception e) {
             e.printStackTrace();

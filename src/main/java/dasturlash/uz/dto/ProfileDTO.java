@@ -25,7 +25,6 @@ public class ProfileDTO {
     @NotBlank(message = "Username required")
     private String username;
 
-    @NotBlank(message = "Photo required")
     private Integer photoId;
 
     @NotBlank(message = "Password required")
@@ -34,4 +33,6 @@ public class ProfileDTO {
     private List<Role> roles;
 
     private LocalDateTime createdDate;
+
+    private String jwt;
 }
