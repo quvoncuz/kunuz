@@ -29,7 +29,7 @@ public class ArticleEntity {
     private String content;
 
     @Column(name = "shared_count")
-    private Integer sharedCount;
+    private Integer sharedCount = 0;
 
     @Column(name = "image_id")
     private String imageId;
@@ -70,10 +70,10 @@ public class ArticleEntity {
     private LocalDateTime publishedDate;
 
     @Column
-    private boolean visible;
+    private boolean visible = true;
 
     @Column(name = "view_count")
-    private Long viewCount;
+    private Long viewCount = 0L;
 
     @OneToMany(mappedBy = "article")
     private List<ArticleCategoryEntity> articleCategory;
