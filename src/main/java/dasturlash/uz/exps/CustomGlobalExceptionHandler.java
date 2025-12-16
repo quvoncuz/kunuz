@@ -1,6 +1,5 @@
-package dasturlash.uz.controller;
+package dasturlash.uz.exps;
 
-import dasturlash.uz.exps.AppBadException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -11,7 +10,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.security.PublicKey;
 import java.util.*;
 
 @ControllerAdvice
@@ -33,5 +31,10 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
     @ExceptionHandler(AppBadException.class)
     public ResponseEntity<String> handleAppBadException(AppBadException ex) {
         return ResponseEntity.badRequest().body(ex.getMessage());
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<String> handleRuntimeException(RuntimeException ex) {
+        return ResponseEntity.internalServerError().body(ex.getMessage());
     }
 }
