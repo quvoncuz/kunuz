@@ -7,6 +7,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,6 +18,7 @@ import org.springframework.web.client.RestTemplate;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true)
 public class SpringConfig {
 
     @Autowired
@@ -24,6 +26,18 @@ public class SpringConfig {
 
     @Autowired
     private JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    public static final String[] AUTH_WHITELIST = {
+            "/section"
+            , "/api/v1/region/lang"
+            , "/category/lang"
+            , "/attach/*"
+            , "/attach/download/*"
+            , "/article/last/**"
+            , "/article/search"
+            , "/article/*/share"
+            , "/article/*"
+    };
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
@@ -37,16 +51,7 @@ public class SpringConfig {
         http.authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> {
             authorizationManagerRequestMatcherRegistry
                     .requestMatchers(HttpMethod.POST, "/api/v1/auth/*").permitAll()
-                    .requestMatchers(HttpMethod.GET, "/section"
-                            , "/api/v1/region/lang"
-                            , "/category/lang"
-                            , "/attach/*"
-                            , "/attach/download/*").permitAll()
-                    .requestMatchers("/section/**").hasAnyRole("ADMIN", "PUBLISH")
-                    .requestMatchers("/attach/**").hasAnyRole("PUBLISH", "MODERATOR")
-                    .requestMatchers("/profile", "/profile/**"
-                            , "/category/**"
-                            , "/api/v1/region/**").hasRole("ADMIN")
+                    .requestMatchers(HttpMethod.GET, AUTH_WHITELIST).permitAll()
                     .anyRequest()
                     .authenticated();
         });
