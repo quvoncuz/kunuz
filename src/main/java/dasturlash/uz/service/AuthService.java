@@ -1,7 +1,7 @@
 package dasturlash.uz.service;
 
-import dasturlash.uz.dto.auth.AuthorizationDTO;
 import dasturlash.uz.dto.ProfileDTO;
+import dasturlash.uz.dto.auth.AuthorizationDTO;
 import dasturlash.uz.dto.auth.RegistrationDTO;
 import dasturlash.uz.dto.auth.VerificationDTO;
 import dasturlash.uz.entity.EmailEntity;
@@ -17,7 +17,6 @@ import dasturlash.uz.repository.SmsRepository;
 import dasturlash.uz.service.sms.SmsSenderService;
 import dasturlash.uz.util.JwtUtil;
 import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -25,7 +24,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-@Slf4j
 @Service
 public class AuthService {
     @Autowired
@@ -56,7 +54,6 @@ public class AuthService {
         }
 
         if (existOptional.isPresent()) {
-            log.warn("Profile with name {} already exists", dto.getUsername());
             ProfileEntity existsProfile = existOptional.get();
             if (existsProfile.getStatus() == Status.NOT_ACTIVE) {
                 profileRoleService.deleteRolesByProfileId(existsProfile.getId());
@@ -105,7 +102,7 @@ public class AuthService {
             throw new AppBadException("This user is blocked. Please contact administrator");
         }
         if (!bCryptPasswordEncoder.matches(dto.getPassword(), profile.getPassword())) {
-            throw new AppBadException("Username or password wrong");
+            throw new AppBadException(" password wrong");
         }
         if (!profile.getStatus().equals(Status.ACTIVE)) {
             throw new AppBadException("User in wrong status");
@@ -119,6 +116,7 @@ public class AuthService {
         response.setRoles(profileRoleService.getByProfileId(profile.getId()));
         response.setJwt(JwtUtil.encode(profile.getUsername(),
                                        response.getRoles().stream().map(Enum::name).toList()));
+
         return response;
     }
 
