@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedList;
@@ -27,6 +28,9 @@ public class ProfileService {
     @Autowired
     private ProfileRoleRepository profileRoleRepository;
 
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
+
     public ProfileInfoDTO create(ProfileDTO profileDTO) {
         Optional<ProfileEntity> profile = getProfileByUsername(profileDTO.getUsername());
         if (profile.isPresent()) {
@@ -36,7 +40,7 @@ public class ProfileService {
         profileEntity.setName(profileDTO.getName());
         profileEntity.setSurname(profileDTO.getSurname());
         profileEntity.setUsername(profileDTO.getUsername());
-        profileEntity.setPassword(profileDTO.getPassword());
+        profileEntity.setPassword(bCryptPasswordEncoder.encode(profileDTO.getPassword()));
         profileEntity.setStatus(Status.ACTIVE);
         ProfileEntity entity = profileRepository.save(profileEntity);
 

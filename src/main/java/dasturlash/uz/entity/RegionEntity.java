@@ -6,6 +6,7 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -38,5 +39,4 @@ public class RegionEntity {
     @Column(name = "created_date")
     @CreationTimestamp
     private LocalDateTime createdDate;
-
 }
