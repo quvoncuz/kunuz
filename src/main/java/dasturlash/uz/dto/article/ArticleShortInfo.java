@@ -1,24 +1,12 @@
 package dasturlash.uz.dto.article;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import dasturlash.uz.dto.KeyValueDTO;
-import lombok.Getter;
-import lombok.Setter;
+import dasturlash.uz.dto.ImageDTO;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
-@Getter
-@Setter
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class ArticleShortInfo {
-    private String title;
-
-    private String description;
-
-    private String imageId;
-
-    private LocalDateTime publishedDate;
-
-    private List<KeyValueDTO> categoryList;
+public interface ArticleShortInfo {
+    String getId();
+    String getTitle();
+    String getDescription();
+    String getImageId();
+    String getImageUrl();
+    String getPublishedDate();
 }

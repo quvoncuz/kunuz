@@ -50,7 +50,7 @@ public class SpringConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> {
             authorizationManagerRequestMatcherRegistry
-                    .requestMatchers(HttpMethod.POST, "/api/v1/auth/*").permitAll()
+                    .requestMatchers(HttpMethod.POST, "/api/v1/auth/*", "/article/filter").permitAll()
                     .requestMatchers(HttpMethod.GET, AUTH_WHITELIST).permitAll()
                     .anyRequest()
                     .authenticated();

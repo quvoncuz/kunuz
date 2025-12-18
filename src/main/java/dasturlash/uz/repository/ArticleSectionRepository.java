@@ -39,4 +39,11 @@ public interface ArticleSectionRepository extends JpaRepository<ArticleCategoryE
             @Param("lang") String lang
     );
 
+    @Query("select a.id from ArticleCategoryEntity as a where a.articleId = ?1")
+    List<Integer> getAllSectionIdByArticleId(String id);
+
+    @Modifying
+    @Transactional
+    @Query("delete from ArticleSectionEntity where articleId = ?1 and sectionId = ?2")
+    void deleteAllByArticleIdAndSectionId(String articleId, Integer sectionId);
 }

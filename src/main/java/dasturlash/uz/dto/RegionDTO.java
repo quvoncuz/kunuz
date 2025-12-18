@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Positive;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@NoArgsConstructor
 public class RegionDTO {
     private Integer id;
 
@@ -30,4 +32,11 @@ public class RegionDTO {
 
     private LocalDateTime createdDate;
     private String name;
+
+    public RegionDTO(Integer regionId, String regionName) {
+        this.id = regionId;
+        this.name = regionName;
+    }
 }
+
+

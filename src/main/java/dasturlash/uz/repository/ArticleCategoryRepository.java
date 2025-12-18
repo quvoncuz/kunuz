@@ -18,6 +18,11 @@ public interface ArticleCategoryRepository extends JpaRepository<ArticleCategory
 
     @Modifying
     @Transactional
+    @Query("delete from ArticleCategoryEntity where articleId = ?1 and categoryId = ?2")
+    void deleteAllByArticleIdAndCategoryId(String articleId, Integer categoryId);
+
+    @Modifying
+    @Transactional
     @Query("delete from ArticleCategoryEntity where articleId = ?1")
     int deleteAllByArticleId(String id);
 
@@ -35,4 +40,9 @@ public interface ArticleCategoryRepository extends JpaRepository<ArticleCategory
     where ac.article.id = ?1
 """)
     List<KeyValueDTO> getAllCategoryByArticleId(String articleId, String lang);
+
+    @Query("select a.id from ArticleCategoryEntity as a where a.articleId = ?1")
+    List<Integer> getAllCategoryIdByArticleId(String id);
+
+    Integer id(String id);
 }
