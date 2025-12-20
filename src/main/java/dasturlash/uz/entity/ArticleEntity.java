@@ -80,4 +80,7 @@ public class ArticleEntity {
 
     @OneToMany(mappedBy = "article")
     private List<ArticleSectionEntity> articleSection;
+
+    @OneToMany(mappedBy = "article")
+    private List<ArticleLikeEntity> likes;
 }

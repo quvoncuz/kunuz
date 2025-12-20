@@ -15,9 +15,10 @@ public class JwtUtil {
     private static final int tokenLiveTime = 1000 * 3600 * 24; // 1-day
     private static final String secretKey = "veryLongSecretmazgillattayevlasharaaxmojonjinnijonsurbetbekkiydirhonuxlatdibekloxovdangasabekochkozjonduxovmashaynikmaydagapchishularnioqiganbolsangizgapyoqaniqsizmazgi";
 
-    public static String encode(String username, List<String> role) {
+    public static String encode(Integer id, String username, List<String> role) {
         Map<String, Object> extraClaims = new HashMap<>();
 
+        extraClaims.put("id", id);
         extraClaims.put("username", username);
         extraClaims.put("role", role);
 
@@ -39,10 +40,11 @@ public class JwtUtil {
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
+        Integer id = (Integer) claims.get("id");
         String username = (String) claims.get("username");
         List<String> role = claims.get("role", List.class);
 
-        return new JwtDTO(username, role);
+        return new JwtDTO(id, username, role);
     }
 
     private static SecretKey getSignInKey() {

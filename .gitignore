@@ -36,3 +36,4 @@ src/main/resources/requirement.txt
 /src/main/resources/token
 src/main/resources/application.properties
 /src/main/resources/.env
+/attaches/

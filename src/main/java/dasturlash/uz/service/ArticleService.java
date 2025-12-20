@@ -1,12 +1,20 @@
 package dasturlash.uz.service;
 
+import dasturlash.uz.dto.ImageDTO;
+import dasturlash.uz.dto.KeyValueDTO;
+import dasturlash.uz.dto.ProfileDTO;
+import dasturlash.uz.dto.RegionDTO;
 import dasturlash.uz.dto.article.ArticleDTO;
 import dasturlash.uz.dto.article.ArticleFullInfo;
 import dasturlash.uz.dto.article.ArticleInfoDTO;
 import dasturlash.uz.dto.article.ArticleShortInfo;
+import dasturlash.uz.dto.filter.AdminFilterDTO;
+import dasturlash.uz.dto.filter.FilterDTO;
+import dasturlash.uz.dto.filter.FilterResultDTO;
 import dasturlash.uz.entity.ArticleEntity;
 import dasturlash.uz.enums.ArticleStatus;
 import dasturlash.uz.exps.AppBadException;
+import dasturlash.uz.repository.ArticleCustomRepository;
 import dasturlash.uz.repository.ArticleRepository;
 import dasturlash.uz.util.SpringSecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +24,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class ArticleService {
@@ -35,22 +43,25 @@ public class ArticleService {
     @Autowired
     private AttachService attachService;
 
+    @Autowired
+    private ArticleCustomRepository articleCustomRepository;
+
     public ArticleInfoDTO create(ArticleDTO dto) {
         ArticleEntity article = new ArticleEntity();
 
         article.setTitle(dto.getTitle());
         article.setDescription(dto.getDescription());
         article.setContent(dto.getContent());
-        article.setImageId(dto.getImageId());
-        article.setRegionId(dto.getRegionId());
+        article.setImageId(dto.getImage().getId());
+        article.setRegionId(dto.getRegion().getId());
         article.setModeratorId(SpringSecurityUtil.currentProfileId());
         article.setStatus(ArticleStatus.NOT_PUBLISHED);
 
         article = articleRepository.save(article);
 
-        articleCategoryService.create(article.getId(), dto.getCategoryList());
+        articleCategoryService.merge(article.getId(), dto.getCategoryList());
 
-        articleSectionService.create(article.getId(), dto.getSectionList());
+        articleSectionService.merge(article.getId(), dto.getSectionList());
 
 
         ArticleInfoDTO info = toInfo(article);
@@ -67,17 +78,15 @@ public class ArticleService {
         article.setTitle(dto.getTitle());
         article.setDescription(dto.getDescription());
         article.setContent(dto.getContent());
-        article.setRegionId(dto.getRegionId());
+        article.setRegionId(dto.getRegion().getId());
 
         attachService.delete(article.getImageId());
 
-        article.setImageId(dto.getImageId());
+        article.setImageId(dto.getImage().getId());
 
-        articleCategoryService.deleteByArticleId(article.getId());
-        articleCategoryService.create(article.getId(), dto.getCategoryList());
+        articleCategoryService.merge(article.getId(), dto.getCategoryList());
 
-        articleSectionService.deleteByArticleId(article.getId());
-        articleSectionService.create(article.getId(), dto.getSectionList());
+        articleSectionService.merge(article.getId(), dto.getSectionList());
 
         article = articleRepository.save(article);
 
@@ -104,151 +113,182 @@ public class ArticleService {
         return "Article not found";
     }
 
-    public PageImpl<ArticleShortInfo> getLastNArticleBySectionId(Integer sectionId, int page, int size) {
+    public PageImpl<ArticleDTO> getLastNArticleBySectionId(Integer sectionId, int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
-        Page<ArticleEntity> lastNArticleBySectionId = articleRepository.getLastNArticleBySectionId(sectionId, pageRequest);
-        List<ArticleShortInfo> resultList = new LinkedList<>();
-        lastNArticleBySectionId.forEach(entity -> {
-            ArticleShortInfo shortInfo = toShortInfo(entity);
-            shortInfo.setCategoryList(articleCategoryService.getAllCategoryByArticleId(entity.getId(), "UZ"));
-            resultList.add(shortInfo);
-        });
+        Page<ArticleShortInfo> lastNArticleBySectionId = articleRepository.getLastNArticleBySectionId(sectionId, pageRequest);
+        List<ArticleDTO> resultList = new LinkedList<>();
+        lastNArticleBySectionId.forEach(entity -> resultList.add(toDTO(entity)));
         return new PageImpl<>(resultList, pageRequest, lastNArticleBySectionId.getTotalElements());
     }
 
-    public PageImpl<ArticleShortInfo> getLast12PublishedArticleExceptGivenIds(List<Integer> ids) {
+    public PageImpl<ArticleDTO> getLast12PublishedArticleExceptGivenIds(List<Integer> ids) {
         PageRequest pageRequest = PageRequest.of(1, 12);
-        Page<ArticleEntity> last12PublishedArticleExceptGivenIds = articleRepository.getLast12PublishedArticleExceptGivenIds(ids, pageRequest);
-        List<ArticleShortInfo> resultList = new LinkedList<>();
-        last12PublishedArticleExceptGivenIds.forEach(entity -> {
-            ArticleShortInfo shortInfo = toShortInfo(entity);
-            shortInfo.setCategoryList(articleCategoryService.getAllCategoryByArticleId(entity.getId(), "UZ"));
-            resultList.add(shortInfo);
-        });
+        Page<ArticleShortInfo> last12PublishedArticleExceptGivenIds = articleRepository.getLast12PublishedArticleExceptGivenIds(ids, pageRequest);
+        List<ArticleDTO> resultList = new LinkedList<>();
+        last12PublishedArticleExceptGivenIds.forEach(entity -> resultList.add(toDTO(entity)));
         return new PageImpl<>(resultList, pageRequest, last12PublishedArticleExceptGivenIds.getTotalElements());
     }
 
-    public PageImpl<ArticleShortInfo> getLastNArticleByCategoryId(Integer categoryId, int page, int size) {
+    public PageImpl<ArticleDTO> getLastNArticleByCategoryId(Integer categoryId, int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
-        Page<ArticleEntity> lastNArticleByCategoryId = articleRepository.getLastNArticleByCategoryId(categoryId, pageRequest);
-        List<ArticleShortInfo> resultList = new LinkedList<>();
-        lastNArticleByCategoryId.forEach(entity -> {
-            ArticleShortInfo shortInfo = toShortInfo(entity);
-            shortInfo.setCategoryList(articleCategoryService.getAllCategoryByArticleId(entity.getId(), "UZ"));
-            resultList.add(shortInfo);
-        });
+        Page<ArticleShortInfo> lastNArticleByCategoryId = articleRepository.getLastNArticleByCategoryId(categoryId, pageRequest);
+        List<ArticleDTO> resultList = new LinkedList<>();
+        lastNArticleByCategoryId.forEach(entity -> resultList.add(toDTO(entity)));
         return new PageImpl<>(resultList, pageRequest, lastNArticleByCategoryId.getTotalElements());
     }
 
-    public PageImpl<ArticleFullInfo> getLastNArticleByRegionId(Integer regionId, int page, int size) {
+    public PageImpl<ArticleDTO> getLastNArticleByRegionId(Integer regionId, int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
-        Page<ArticleEntity> lastNArticleByRegionId = articleRepository.getLastNArticleByRegionId(regionId, pageRequest);
-        List<ArticleFullInfo> resultList = new LinkedList<>();
-        lastNArticleByRegionId.forEach(entity -> {
-            ArticleFullInfo article = toFullInfo(entity);
-            article.setCategoryList(articleCategoryService.getAllCategoryByArticleId(entity.getId(), "UZ"));
-            article.setSectionList(articleSectionService.getAllSectionByArticleId(entity.getId(), "UZ"));
-            resultList.add(article);
-        });
+        Page<ArticleFullInfo> lastNArticleByRegionId = articleRepository.getLastNArticleByRegionId(regionId, pageRequest);
+        List<ArticleDTO> resultList = new LinkedList<>();
+        lastNArticleByRegionId.forEach(entity -> resultList.add(toDTO(entity)));
         return new PageImpl<>(resultList, pageRequest, lastNArticleByRegionId.getTotalElements());
     }
 
-    public ArticleFullInfo getArticleByIdAndLang(String id, String lang) {
-        ArticleEntity entity = articleRepository.getArticleById(id).orElseThrow(() -> new AppBadException("Article not found"));
+    public ArticleDTO getArticleByIdAndLang(String id, String lang) {
         increaseViewCount(id);
-        ArticleFullInfo article = toFullInfo(entity);
-        article.setSectionList(articleSectionService.getAllSectionByArticleId(entity.getId(), lang.toUpperCase()));
-        article.setCategoryList(articleCategoryService.getAllCategoryByArticleId(entity.getId(), lang.toUpperCase()));
-        return article;
+        return toDTO(articleRepository
+                .getArticleByIdAndLang(id, lang)
+                .orElseThrow(() -> new AppBadException("Article not found"))
+        );
     }
 
-    public PageImpl<ArticleShortInfo> getLastNArticleByTagName(String tagName, int page, int size) {
-        PageRequest pageRequest = PageRequest.of(page, size);
-        Page<ArticleEntity> lastNArticleByTagName = articleRepository.getLastNArticleByTagName("%" + tagName + "%", pageRequest);
-        List<ArticleShortInfo> resultList = new LinkedList<>();
-        lastNArticleByTagName.forEach(entity -> {
-            ArticleShortInfo shortInfo = toShortInfo(entity);
-            shortInfo.setCategoryList(articleCategoryService.getAllCategoryByArticleId(entity.getId(), "UZ"));
-            resultList.add(shortInfo);
-        });
-        return new PageImpl<>(resultList, pageRequest, lastNArticleByTagName.getTotalElements());
-    }
+//    public PageImpl<ArticleDTO> getLastNArticleByTagName(String tagName, int page, int size) {
+//        PageRequest pageRequest = PageRequest.of(page, size);
+//        Page<ArticleShortInfo> lastNArticleByTagName = articleRepository.getLastNArticleByTagName("%" + tagName + "%", pageRequest);
+//        List<ArticleShortInfo> resultList = new LinkedList<>();
+//        lastNArticleByTagName.forEach(entity -> resultList.add(toShortInfo(entity)));
+//        return new PageImpl<>(resultList, pageRequest, lastNArticleByTagName.getTotalElements());
+//    }
 
-    public List<ArticleShortInfo> getLast4ArticleBySectionIdExceptOneArticleId(String articleId, Integer sectionId) {
-        List<ArticleEntity> last4ArticleBySectionIdExceptOneArticleId = articleRepository.getLast4ArticleBySectionIdExceptOneArticleId(articleId, sectionId);
-        List<ArticleShortInfo> resultList = new LinkedList<>();
-        last4ArticleBySectionIdExceptOneArticleId.forEach(entity -> {
-            ArticleShortInfo shortInfo = toShortInfo(entity);
-            shortInfo.setCategoryList(articleCategoryService.getAllCategoryByArticleId(entity.getId(), "UZ"));
-            resultList.add(shortInfo);
-        });
+    public List<ArticleDTO> getLast4ArticleBySectionIdExceptOneArticleId(String articleId, Integer sectionId) {
+        List<ArticleShortInfo> last4ArticleBySectionIdExceptOneArticleId = articleRepository.getLast4ArticleBySectionIdExceptOneArticleId(articleId, sectionId);
+        List<ArticleDTO> resultList = new LinkedList<>();
+        last4ArticleBySectionIdExceptOneArticleId.forEach(entity -> resultList.add(toDTO(entity)));
         return resultList;
     }
 
-    public List<ArticleShortInfo> getLast4MostViewedArticleExceptOneArticleId(String articleId) {
-        List<ArticleEntity> last4MostViewedArticleExceptOneArticleId = articleRepository.getLast4MostViewedArticleExceptOneArticleId(articleId);
-        List<ArticleShortInfo> resultList = new LinkedList<>();
-        last4MostViewedArticleExceptOneArticleId.forEach(entity -> {
-            ArticleShortInfo shortInfo = toShortInfo(entity);
-            shortInfo.setCategoryList(articleCategoryService.getAllCategoryByArticleId(entity.getId(), "UZ"));
-            resultList.add(shortInfo);
-        });
+    public List<ArticleDTO> getLast4MostViewedArticleExceptOneArticleId(String articleId) {
+        List<ArticleShortInfo> last4MostViewedArticleExceptOneArticleId = articleRepository.getLast4MostViewedArticleExceptOneArticleId(articleId);
+        List<ArticleDTO> resultList = new LinkedList<>();
+        last4MostViewedArticleExceptOneArticleId.forEach(entity -> resultList.add(toDTO(entity)));
         return resultList;
     }
 
-    public Long increaseViewCount(String articleId){
+    public Long increaseViewCount(String articleId) {
         articleRepository.increaseViewCountByArticleId(articleId);
         return articleRepository.getArticleViewCountByArticleId(articleId);
     }
-    public Long increaseShareCount(String articleId){
+
+    public Long increaseShareCount(String articleId) {
         articleRepository.increaseShareCountByArticleId(articleId);
         return articleRepository.getArticleShareCountByArticleId(articleId);
     }
 
-    private ArticleFullInfo toFullInfo(ArticleEntity entity) {
-        ArticleFullInfo article = new ArticleFullInfo();
-        article.setDescription(entity.getDescription());
-        article.setTitle(entity.getTitle());
-        article.setImageId(entity.getImageId());
-        article.setPublishedDate(entity.getPublishedDate());
-        article.setViewCount(entity.getViewCount());
-        article.setSharedCount(entity.getSharedCount());
-        article.setRegionId(entity.getRegionId());
-        article.setReadTime(entity.getReadTime());
-        article.setModeratorId(entity.getModeratorId());
-        article.setContent(entity.getContent());
-        return article;
+    public PageImpl<ArticleDTO> filter(FilterDTO dto, int page, int size, boolean isModerator) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        FilterResultDTO<Object[]> filterResult = articleCustomRepository.filter(dto, page, size, isModerator);
+        List<ArticleDTO> resultList = new LinkedList<>();
+        filterResult.getContent().forEach(info -> {
+            ArticleDTO articleDTO = new ArticleDTO();
+            articleDTO.setId((String) info[0]);
+            articleDTO.setDescription((String) info[1]);
+            articleDTO.setImage(new ImageDTO((String) info[2], null/*(String) info[3]*/));
+            articleDTO.setPublishedDate((LocalDateTime) info[3]);
+            articleDTO.setTitle((String) info[4]);
+            resultList.add(articleDTO);
+        });
+        return new PageImpl<>(resultList, pageRequest, filterResult.getTotalCount());
     }
 
-    private ArticleShortInfo toShortInfo(ArticleEntity entity) {
-        ArticleShortInfo article = new ArticleShortInfo();
-        article.setDescription(entity.getDescription());
-        article.setTitle(entity.getTitle());
-        article.setImageId(entity.getImageId());
-        article.setPublishedDate(entity.getPublishedDate());
-        return article;
+    public PageImpl<ArticleDTO> adminFilter(AdminFilterDTO dto, int page, int size) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        FilterResultDTO<Object[]> filterResult = articleCustomRepository.adminFilter(dto, page, size);
+        List<ArticleDTO> resultList = new LinkedList<>();
+        filterResult.getContent().forEach(info -> {
+            ArticleDTO articleDTO = new ArticleDTO();
+            articleDTO.setId((String) info[0]);
+            articleDTO.setDescription((String) info[1]);
+            articleDTO.setImage(new ImageDTO((String) info[2], null/*(String) info[3]*/));
+            articleDTO.setPublishedDate((LocalDateTime) info[3]);
+            articleDTO.setTitle((String) info[4]);
+            resultList.add(articleDTO);
+        });
+        return new PageImpl<>(resultList, pageRequest, filterResult.getTotalCount());
     }
 
-    private ArticleDTO toDTO(ArticleEntity entity) {
+
+    // get last n article
+//    public List<ArticleDTO> getLastNArticle(Integer limit) {
+//        List<ArticleShortInfo> resultList = articleRepository.getLastNArticle(limit); // 1
+//        List<ArticleDTO> responseList = new LinkedList<>();
+//        //  N + 1
+//        resultList.forEach(mapper -> {
+//            ArticleDTO articleDTO = toDTO(mapper);
+//
+//            ProfileDTO moderator = new ProfileDTO();
+//            moderator.setId(mapper.getModeratorId());
+//            moderator.setName(mapper.getModerName());
+//            moderator.setUsername(mapper.getModerSurname());
+//            articleDTO.setModerator(moderator);
+//
+//            responseList.add(articleDTO);
+//        });
+//
+//        return responseList;
+//    }
+
+    private ArticleDTO toDTO(ArticleFullInfo fullINfo) {
         ArticleDTO dto = new ArticleDTO();
-        dto.setId(entity.getId());
-        dto.setContent(entity.getContent());
-        dto.setTitle(entity.getTitle());
-        dto.setDescription(entity.getDescription());
-        dto.setImageId(entity.getImageId());
-        dto.setModeratorId(entity.getModeratorId());
-        dto.setPublisherId(entity.getPublisherId());
-        dto.setReadTime(entity.getReadTime());
-        dto.setCreatedDate(entity.getCreatedDate());
-        dto.setPublishedDate(entity.getPublishedDate());
-        dto.setRegionId(entity.getRegionId());
-        dto.setSharedCount(entity.getSharedCount());
-        dto.setViewCount(entity.getViewCount());
-        dto.setStatus(entity.getStatus());
+        ProfileDTO moderator = new ProfileDTO();
+        moderator.setId(fullINfo.getModeratorId());
+        moderator.setName(fullINfo.getModeratorName());
+        dto.setId(fullINfo.getId());
+        dto.setContent(fullINfo.getContent());
+        dto.setTitle(fullINfo.getTitle());
+        dto.setDescription(fullINfo.getDescription());
+        dto.setModerator(moderator);
+        String[] categoryId = fullINfo.getCategoryListId().split(",");
+        String[] categoryName = fullINfo.getCategoryListName().split(",");
+
+        List<KeyValueDTO> categoryList = new ArrayList<>();
+        for (int i = 0; i < categoryId.length; i++) {
+            KeyValueDTO keyValueDTO = new KeyValueDTO(Integer.parseInt(categoryId[i]), categoryName[i]);
+            categoryList.add(keyValueDTO);
+        }
+
+        dto.setCategoryList(categoryList);
+
+        String[] sectionId = fullINfo.getSectionListId().split(",");
+        String[] sectionName = fullINfo.getSectionListName().split(",");
+
+        List<KeyValueDTO> sectionList = new ArrayList<>();
+        for (int i = 0; i < categoryId.length; i++) {
+            KeyValueDTO keyValueDTO = new KeyValueDTO(Integer.parseInt(sectionId[i]), sectionName[i]);
+            sectionList.add(keyValueDTO);
+        }
+
+        dto.setSectionList(sectionList);
+
+        dto.setReadTime(fullINfo.getReadTime());
+        dto.setPublishedDate(fullINfo.getPublishedDate());
+        dto.setRegion(new RegionDTO(fullINfo.getRegionId(), fullINfo.getRegionName()));
+        dto.setSharedCount(fullINfo.getSharedCount());
+        dto.setViewCount(fullINfo.getViewCount());
         return dto;
     }
 
-    private ArticleInfoDTO toInfo(ArticleEntity article){
+    private ArticleDTO toDTO(ArticleShortInfo shortInfo) {
+        ArticleDTO dto = new ArticleDTO();
+        dto.setId(shortInfo.getId());
+        dto.setTitle(shortInfo.getTitle());
+        dto.setDescription(shortInfo.getDescription());
+        dto.setImage(new ImageDTO(shortInfo.getImageId(), shortInfo.getImageUrl()));
+        dto.setPublishedDate(LocalDateTime.parse(shortInfo.getPublishedDate()));
+        return dto;
+    }
+
+    private ArticleInfoDTO toInfo(ArticleEntity article) {
         ArticleInfoDTO articleInfoDTO = new ArticleInfoDTO();
         articleInfoDTO.setTitle(article.getTitle());
         articleInfoDTO.setDescription(article.getDescription());
