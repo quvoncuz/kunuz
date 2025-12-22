@@ -1,5 +1,6 @@
 package dasturlash.uz.service;
 
+import dasturlash.uz.dto.ImageDTO;
 import dasturlash.uz.dto.ProfileDTO;
 import dasturlash.uz.dto.ProfileInfoDTO;
 import dasturlash.uz.entity.ProfileEntity;
@@ -78,7 +79,7 @@ public class ProfileService {
         profileEntity.setSurname(profileDTO.getSurname());
         profileEntity.setUsername(profileDTO.getUsername());
         profileEntity.setPassword((profileDTO.getPassword()));
-        profileEntity.setPhotoId(profileDTO.getPhotoId());
+        profileEntity.setPhotoId(profileDTO.getImage().getId());
 
         // 4. Roleni yangilash
         if (profileDTO.getRoles() != null) {
@@ -111,7 +112,7 @@ public class ProfileService {
         profileEntity.setName(profileDTO.getName());
         profileEntity.setSurname(profileDTO.getSurname());
         profileEntity.setUsername(profileDTO.getUsername());
-        profileEntity.setPhotoId(profileDTO.getPhotoId());
+        profileEntity.setPhotoId(profileDTO.getImageId());
         profileRepository.save(profileEntity);
         return toInfoDTO(profileEntity);
     }
@@ -158,7 +159,7 @@ public class ProfileService {
         profileInfoDTO.setUsername(profileEntity.getUsername());
         profileInfoDTO.setSurname(profileEntity.getSurname());
         profileInfoDTO.setName(profileEntity.getName());
-        profileInfoDTO.setPhotoId(profileEntity.getPhotoId());
+        profileInfoDTO.setImageId(profileEntity.getPhotoId());
         profileInfoDTO.setRoles(
                 profileRoleRepository.findAllByProfileId(profileEntity.getId())
                         .stream()
@@ -173,7 +174,7 @@ public class ProfileService {
         profileDTO.setUsername(profileEntity.getUsername());
         profileDTO.setSurname(profileEntity.getSurname());
         profileDTO.setName(profileEntity.getName());
-        profileDTO.setPhotoId(profileEntity.getPhotoId());
+        profileDTO.setImage(new ImageDTO(profileEntity.getPhotoId(), ""));
         profileDTO.setCreatedDate(profileEntity.getCreatedDate());
         profileDTO.setRoles(
                 profileRoleRepository.findAllByProfileId(profileEntity.getId())

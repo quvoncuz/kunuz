@@ -6,12 +6,14 @@ import dasturlash.uz.service.RegionService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/region")
+@PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
 public class RegionController {
 
     @Autowired
@@ -39,6 +41,7 @@ public class RegionController {
     }
 
     @GetMapping("/lang")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<List<RegionDTO>> getByLang(@RequestHeader(name = "Accept-Language", defaultValue = "uz") AppLanguageEnum language) {
         return ResponseEntity.ok(regionService.getAllByLang(language));
     }

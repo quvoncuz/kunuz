@@ -25,7 +25,7 @@ public class ProfileDTO {
     @NotBlank(message = "Username required")
     private String username;
 
-    private Integer photoId;
+    private ImageDTO image;
 
     @NotBlank(message = "Password required")
     private String password;

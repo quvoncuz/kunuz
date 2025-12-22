@@ -4,13 +4,17 @@ import dasturlash.uz.dto.ProfileDTO;
 import dasturlash.uz.dto.ProfileInfoDTO;
 import dasturlash.uz.service.ProfileService;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequestMapping("/profile")
+@PreAuthorize("hasAnyRole('MODERATOR', 'ADMIN')")
 public class ProfileController {
     @Autowired
     private ProfileService profileService;
@@ -32,8 +36,10 @@ public class ProfileController {
     }
 
     @PutMapping("{id}")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<ProfileInfoDTO> update(@PathVariable("id") Integer id,
                                                  @Valid @RequestBody ProfileInfoDTO profileDTO) {
+        log.warn("checking role");
         return ResponseEntity.ok(profileService.update(id, profileDTO));
     }
 

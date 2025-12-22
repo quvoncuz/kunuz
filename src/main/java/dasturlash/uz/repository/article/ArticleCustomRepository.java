@@ -1,4 +1,4 @@
-package dasturlash.uz.repository;
+package dasturlash.uz.repository.article;
 
 import dasturlash.uz.dto.filter.AdminFilterDTO;
 import dasturlash.uz.dto.filter.FilterDTO;

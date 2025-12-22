@@ -1,7 +1,7 @@
-package dasturlash.uz.repository;
+package dasturlash.uz.repository.article;
 
 import dasturlash.uz.dto.KeyValueDTO;
-import dasturlash.uz.entity.ArticleCategoryEntity;
+import dasturlash.uz.entity.article.ArticleCategoryEntity;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

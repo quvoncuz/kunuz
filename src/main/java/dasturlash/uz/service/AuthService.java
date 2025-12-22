@@ -114,7 +114,7 @@ public class AuthService {
         response.setSurname(profile.getSurname());
         response.setUsername(profile.getUsername());
         response.setRoles(profileRoleService.getByProfileId(profile.getId()));
-        response.setJwt(JwtUtil.encode(profile.getUsername(),
+        response.setJwt(JwtUtil.encode(profile.getId(), profile.getUsername(),
                                        response.getRoles().stream().map(Enum::name).toList()));
 
         return response;

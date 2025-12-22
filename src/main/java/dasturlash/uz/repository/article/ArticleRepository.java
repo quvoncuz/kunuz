@@ -1,12 +1,11 @@
-package dasturlash.uz.repository;
+package dasturlash.uz.repository.article;
 
 import dasturlash.uz.dto.article.ArticleFullInfo;
 import dasturlash.uz.dto.article.ArticleShortInfo;
-import dasturlash.uz.entity.ArticleEntity;
+import dasturlash.uz.entity.article.ArticleEntity;
 import dasturlash.uz.enums.ArticleStatus;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

@@ -5,6 +5,7 @@ import dasturlash.uz.service.sms.SmsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -14,6 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/sms")
+@PreAuthorize("hasRole('ADMIN')")
 public class SmsController {
     @Autowired
     private SmsService smsService;

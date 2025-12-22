@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,6 +17,7 @@ public class AttachController {
     private AttachService attachService;
 
     @PostMapping("")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR', 'PUBLISHER')")
     public ResponseEntity<AttachDTO> upload(@RequestParam("file") MultipartFile file) {
         return ResponseEntity.ok(attachService.upload(file));
     }
@@ -31,6 +33,7 @@ public class AttachController {
     }
 
     @GetMapping("all")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
     public Page<AttachDTO> pagination(@RequestParam int page,
                                       @RequestParam int size) {
         return attachService.pagination(page-1, size);

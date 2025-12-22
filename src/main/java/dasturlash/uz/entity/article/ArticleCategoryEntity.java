@@ -1,5 +1,6 @@
-package dasturlash.uz.entity;
+package dasturlash.uz.entity.article;
 
+import dasturlash.uz.entity.CategoryEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

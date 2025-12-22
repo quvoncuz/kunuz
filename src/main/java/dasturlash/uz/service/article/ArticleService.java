@@ -1,4 +1,4 @@
-package dasturlash.uz.service;
+package dasturlash.uz.service.article;
 
 import dasturlash.uz.dto.ImageDTO;
 import dasturlash.uz.dto.KeyValueDTO;
@@ -11,11 +11,12 @@ import dasturlash.uz.dto.article.ArticleShortInfo;
 import dasturlash.uz.dto.filter.AdminFilterDTO;
 import dasturlash.uz.dto.filter.FilterDTO;
 import dasturlash.uz.dto.filter.FilterResultDTO;
-import dasturlash.uz.entity.ArticleEntity;
+import dasturlash.uz.entity.article.ArticleEntity;
 import dasturlash.uz.enums.ArticleStatus;
 import dasturlash.uz.exps.AppBadException;
-import dasturlash.uz.repository.ArticleCustomRepository;
-import dasturlash.uz.repository.ArticleRepository;
+import dasturlash.uz.repository.article.ArticleCustomRepository;
+import dasturlash.uz.repository.article.ArticleRepository;
+import dasturlash.uz.service.AttachService;
 import dasturlash.uz.util.SpringSecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

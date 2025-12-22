@@ -7,12 +7,14 @@ import jakarta.validation.Valid;
 import org.apache.tomcat.util.http.parser.AcceptLanguage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/category")
+@PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
 public class CategoryController {
 
     @Autowired
@@ -39,6 +41,7 @@ public class CategoryController {
     }
 
     @GetMapping("/lang")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<List<CategoryDTO>> findByLang(@RequestHeader(name = "Accept-Language", defaultValue = "UZ") String lang) {
         return ResponseEntity.ok(categoryService.getAllByLang(lang));
     }

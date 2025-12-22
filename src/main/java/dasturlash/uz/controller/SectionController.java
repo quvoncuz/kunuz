@@ -6,6 +6,7 @@ import dasturlash.uz.service.SectionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -14,7 +15,8 @@ public class SectionController {
     @Autowired
     private SectionService sectionService;
 
-    @PostMapping("")
+    @PostMapping("/moderator")
+    @PreAuthorize("hasAnyRole('ADMIN', 'ROLE_MODERATOR')")
     public ResponseEntity<SectionDTO> create(@RequestBody SectionDTO sectionDTO) {
         return ResponseEntity.ok(sectionService.create(sectionDTO));
     }
@@ -26,7 +28,8 @@ public class SectionController {
     }
 
 
-    @GetMapping("")
+    @GetMapping({"", "/"})
+    @PreAuthorize("permitAll()")
     public ResponseEntity<PageImpl<SectionDTO>> getAllSections(@RequestHeader(name = "Accept-Language", defaultValue = "UZ") String lang,
                                                                @RequestParam int page,
                                                                @RequestParam int size) {
@@ -34,11 +37,13 @@ public class SectionController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
     public ResponseEntity<Boolean> deleteById(@PathVariable("id") Integer id) {
         return ResponseEntity.ok(sectionService.deleteById(id));
     }
 
     @GetMapping("/admin")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR', 'PUBLISHER')")
     public ResponseEntity<PageImpl<SectionEntity>> getAllByPagination(@RequestParam int page,
                                                                       @RequestParam int size) {
         return ResponseEntity.ok(sectionService.pagination(page-1, size));

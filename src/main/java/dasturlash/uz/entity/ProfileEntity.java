@@ -37,7 +37,7 @@ public class ProfileEntity {
     private LocalDateTime createdDate;
 
     @Column(name = "photo_id")
-    private Integer photoId;
+    private String photoId;
 
     @OneToMany(mappedBy = "profile")
     private List<ProfileRoleEntity> profileRoles;

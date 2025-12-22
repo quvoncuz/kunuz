@@ -22,7 +22,7 @@ public class ProfileInfoDTO {
     @NotBlank
     private String username;
 
-    private Integer photoId;
+    private String imageId;
 
     private List<Role> roles;
 
