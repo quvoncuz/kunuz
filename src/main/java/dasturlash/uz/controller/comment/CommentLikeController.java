@@ -1,21 +1,19 @@
-package dasturlash.uz.controller;
+package dasturlash.uz.controller.comment;
 
 import dasturlash.uz.dto.comment.CommentLikeDTO;
 import dasturlash.uz.service.comment.CommentLikeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/comment/like")
+@RequestMapping("/comment")
 public class CommentLikeController {
 
     @Autowired
     private CommentLikeService commentLikeService;
 
+    @PostMapping("/like")
     public ResponseEntity<?> like(@RequestBody CommentLikeDTO dto,
                                   @RequestHeader(value = "Authorization") String token) {
         if (token.startsWith("Bearer ")) {
@@ -26,6 +24,7 @@ public class CommentLikeController {
         return ResponseEntity.ok(commentLikeService.like(dto, token));
     }
 
+    @PostMapping("/dislike")
     public ResponseEntity<?> dislike(@RequestBody CommentLikeDTO dto,
                                      @RequestHeader(value = "Authorization") String token) {
         if (token.startsWith("Bearer ")) {

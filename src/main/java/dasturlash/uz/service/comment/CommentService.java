@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -33,8 +34,8 @@ public class CommentService {
     @Autowired
     private CommentCustomRepository commentCustomRepository;
 
-    public CommentDTO create(CommentDTO dto){
-        Optional<CommentEntity> byId = commentRepository.findById(dto.getId());
+    public CommentDTO mergeComment(CommentDTO dto, String commentId){
+        Optional<CommentEntity> byId = commentRepository.findById(commentId);
         if (byId.isPresent()){
             CommentEntity comment = byId.get();
             if (!comment.getProfileId().equals(dto.getProfile().getId())){
@@ -62,8 +63,8 @@ public class CommentService {
         Integer profileId = JwtUtil.decode(token).getId();
         CommentEntity comment = commentRepository.findByIdAndVisibleIsTrue(commentId)
                 .orElseThrow(() -> new AppBadException("Comment Not Found"));
-        if (comment.getProfileId() != profileId || 
-                !JwtUtil.decode(token).getRole().contains(Role.ROLE_ADMIN)){
+        if (!Objects.equals(comment.getProfileId(), profileId) ||
+                !JwtUtil.decode(token).getRole().contains(Role.ROLE_ADMIN.toString())){
             throw new AppBadException("You are not OWNER!");
         }
         comment.setVisible(false);
